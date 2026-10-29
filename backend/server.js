@@ -42,6 +42,18 @@ app.post("/signup", async (req,res) => {
             message: "Email and password are required",
         });
     }
+
+    if (typeof email !== "string" || typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({
+        message: "enter a valid email and a password of at least 8 characters",
+      });
+    }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  return res.status(400).json({
+    message: "Please enter a valid email address",
+  });
+}
+
         const existingUser = await User.findOne({ email: email });
 
 if (existingUser) {

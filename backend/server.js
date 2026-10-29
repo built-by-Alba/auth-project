@@ -54,7 +54,9 @@ app.post("/signup", async (req,res) => {
   });
 }
 
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await User.findOne({ 
+          email: email.toLocaleLowerCase().trim(),
+        });
 
 if (existingUser) {
   return res.status(409).json({
@@ -64,7 +66,7 @@ if (existingUser) {
     
     const hashedPassword = await bcrypt.hash(password, 12);
      await User.create({
-        email: email, 
+        email: email.toLocaleLowerCase().trim(),
         password: hashedPassword,
      });
 
@@ -90,7 +92,15 @@ app.post("/login" , async (req, res) => {
         message: "Email and password are required",
       });
     }
-      const user= await User.findOne({email: email});
+
+    if (typeof email !== "string" || typeof password !=="string"){
+      return res.status(400).json({
+        message:"Email and password must be text",
+      });
+    }
+      const user= await User.findOne({
+        email: email.toLocaleLowerCase().trim(),
+      });
 
       if (!user){
         return res.status(401).json({
